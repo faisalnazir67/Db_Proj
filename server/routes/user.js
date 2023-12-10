@@ -7,7 +7,7 @@ const router = express.Router();
 router.post("/new", register);
 router.post("/login", login);
 
-router.get("/logout", logout);
+router.post("/logout", logout);
 
 router.get("/me", isAuthenticated, getMyProfile);
 
@@ -28,8 +28,7 @@ router.post('adminlogin')
 // router.post("/new", register);
 // router.post("/login", login);
 // router.get("/logout", logout);
-
-// // Protected routes requiring authentication
+// Protected routes requiring authentication
 // router.get("/me", isAuthenticated, getMyProfile);
 // router.post("/driversignup", isAuthenticated, driver_signup);
 // router.get("/drivers", isAuthenticated, getAvailableDrivers);
