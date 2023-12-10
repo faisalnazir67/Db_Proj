@@ -8,6 +8,8 @@ import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
 
+  console.log("Reached 11")
+
   const navigate = useNavigate()
   const handleLoginSubmit = async (event) => {
     event.preventDefault();
@@ -28,8 +30,8 @@ const Login = () => {
         // Redirect or perform any necessary actions upon successful login
         const userData = await response.json(); // Assuming the response contains user data
         const { name } = userData; // Extracting the name from user data
-      
-        // navigate('/clientsuccess', { state: { name } });
+        localStorage.setItem("admin_token", userData.token);
+        navigate('/admin_success', { state: { name } });
 
       } else {
         console.error('Login failed'); // Handle failed login
@@ -45,7 +47,7 @@ const Login = () => {
   return (
     <div className="login-page">
       <div className="login-header">
-        Welcome back <span className="lib-name">User</span>
+        Welcome back <span className="lib-name">Admin</span>
       </div>
       <div className='partition'></div>
       <form className='form' onSubmit={handleLoginSubmit}>
@@ -60,7 +62,7 @@ const Login = () => {
         </div>
       </form>
       <div className="question">
-        Don't have an account? <Link to="/signup">Signup</Link>
+        Don't have an account? <Link to="/admin/signup">Signup</Link>
       </div>
     </div>
   );

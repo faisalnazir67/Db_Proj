@@ -1,7 +1,5 @@
 // Login.js
-
-import React, { useState } from 'react';
-
+import React from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/login.css';
 import { useNavigate } from 'react-router-dom';
@@ -21,13 +19,16 @@ const Login = () => {
         },
         body: JSON.stringify({ email, password }),
       });
-
       if (response.ok) {
+
         console.log('Login successful!'); // Handle successful login
         // Redirect or perform any necessary actions upon successful login
         const userData = await response.json(); // Assuming the response contains user data
         const { name } = userData; // Extracting the name from user data
-      
+        
+        console.log("User Data:", userData);
+        localStorage.setItem("client_token", userData.token);
+
         navigate('/clientsuccess', { state: { name } });
 
       } else {

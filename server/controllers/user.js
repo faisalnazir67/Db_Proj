@@ -2,11 +2,11 @@ import { User } from "../models/user.js";
 import bcrypt from "bcrypt";
 import { sendCookie } from "../utils/features.js";
 import ErrorHandler from "../middlewares/error.js";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
-import { Driver } from "../models/user.js";
+import { Driver, Admin } from "../models/user.js";
 import { Ride } from "../models/user.js";
-import { ObjectId } from 'mongodb';
+import { ObjectId } from "mongodb";
 
 // CLient login
 export const login = async (req, res, next) => {
@@ -15,15 +15,14 @@ export const login = async (req, res, next) => {
     const user = await User.findOne({ email }).select("+password");
 
     if (!user) return next(new ErrorHandler("Invalid Email or Password", 400));
-
     const isMatch = await bcrypt.compare(password, user.password);
-   
-    if (!isMatch)
+
+    if (!isMatch) {
       return next(new ErrorHandler("Invalid Email or Password", 400));
-    console.log("Setting up cookie")
+    }
+
     sendCookie(user, res, `Welcome back, ${user.name}`, 200);
   } catch (error) {
-   
     next(error);
   }
 };
@@ -35,10 +34,11 @@ export const driverLogin = async (req, res, next) => {
     const { email, password } = req.body;
     const driver = await Driver.findOne({ email }).select("+password");
 
-    if (!driver) return next(new ErrorHandler("Invalid Email or Password", 400));
+    if (!driver)
+      return next(new ErrorHandler("Invalid Email or Password", 400));
 
     const isMatch = await bcrypt.compare(password, driver.password);
-   
+
     if (!isMatch)
       return next(new ErrorHandler("Invalid Email or Password", 400));
 
@@ -50,9 +50,8 @@ export const driverLogin = async (req, res, next) => {
 };
 
 //Client  Register
-export const register = async (req, res,next) => {
+export const register = async (req, res, next) => {
   try {
-    
     const { name, email, password } = req.body;
 
     let user = await User.findOne({ email });
@@ -62,11 +61,9 @@ export const register = async (req, res,next) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     user = await User.create({ name, email, password: hashedPassword });
-   
+
     sendCookie(user, res, "Registered Successfully", 201);
-   
   } catch (error) {
-   
     next(error);
   }
 };
@@ -74,9 +71,9 @@ export const register = async (req, res,next) => {
 //Driver Signup
 export const driver_signup = async (req, res, next) => {
   try {
-
     // console.log("In Driver Signup")
-    const { name, email, password, phoneNumber, carName, licenseNumber } = req.body;
+    const { name, email, password, phoneNumber, carName, licenseNumber } =
+      req.body;
 
     let driver = await Driver.findOne({ email });
 
@@ -85,7 +82,6 @@ export const driver_signup = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const wallet = Math.floor(Math.random() * (50000 - 25000 + 1)) + 25000;
-
 
     driver = await Driver.create({
       name,
@@ -105,13 +101,11 @@ export const driver_signup = async (req, res, next) => {
   }
 };
 
-
 // Get Driver Data
 export const getAvailableDrivers = async (req, res, next) => {
-
   try {
     // Find drivers where availability is 1 and project specific fields
-    console.log("Getting driver data")
+
     const drivers = await Driver.find({ available: 1 }, 'name phoneNumber carName licenseNumber');
 
     res.status(200).json({
@@ -220,22 +214,21 @@ export const setupRide = async (req, res, next) => {
     const { driver_id, driver_name, user_name, fare, end_location } = req.body;
 
     // Log the ride data
-    console.log('Received ride setup request:');
-    console.log('Driver ID:', driver_id);
-    console.log('Driver Name:', driver_name);
-    console.log('User Name:', user_name);
-    console.log('Fare:', fare);
-    console.log('End Location:', end_location);
+    console.log("Received ride setup request:");
+    console.log("Driver ID:", driver_id);
+    console.log("Driver Name:", driver_name);
+    console.log("User Name:", user_name);
+    console.log("Fare:", fare);
+    console.log("End Location:", end_location);
 
     const ride_id = uuidv4();
-
 
     // Create a new ride document using the Ride model
     const newRide = await Ride.create({
       ride_id: ride_id,
       driver_id: driver_id,
       user_name: user_name,
-      start_location: 'LUMS', // Assuming a default start location as 'LUMS'
+      start_location: "LUMS", // Assuming a default start location as 'LUMS'
       end_location: end_location,
       fare: fare,
     });
@@ -245,12 +238,13 @@ export const setupRide = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: 'Ride setup successful.',
+      ride_id: ride_id,
       driver_id: driver_id,
       ride: newRide,
-    })
+    });
   } catch (error) {
     // Handle errors
-    console.error('Error creating ride:', error);
+    console.error("Error creating ride:", error);
     next(error);
   }
 };
@@ -262,30 +256,32 @@ export const addRating = async (req, res, next) => {
 
     // const { ObjectId } = require('mongodb');
     // Log the received rating and rideData
-    console.log('Received rating:', rating);
+    console.log("Received rating:", rating);
     // console.log('Received rideData:', rideData);
     const { ride_id, driver_id } = rideData; // Extract ride_id and driver_id from rideData
     
-    // const driverObjectId =new ObjectId(driver_id);
+    const driverObjectId =new ObjectId(driver_id);
     console.log(ride_id)
-    console.log( driver_id )
-    
+    console.log( driverObjectId )
+    // Delete the ride with the specified ride_id from the rides collection
     await Ride.findOneAndDelete({ ride_id });
 
-    await Driver.findOneAndUpdate({  driver_id }, { available: 1 });
+    // Update the driver document to set 'available' to 1
+    await Driver.findOneAndUpdate({  driverObjectId  }, { available: 1 });
 
-    await Driver.findOneAndUpdate({  driver_id  }, { $set: { rating } });
+    // Create a new 'rating' field in the Driver document with the received rating
+    await Driver.findOneAndUpdate({  driverObjectId  }, { $set: { rating } });
 
+    // Perform other operations with the rating data, like saving it to a database
+
+    // Send a response indicating successful rating addition
     res.status(200).json({ success: true, message: 'Rating added successfully.' });
   } catch (error) {
     // Handle errors
-    console.error('Error adding rating:', error);
+    console.error("Error adding rating:", error);
     next(error);
   }
 };
-
-
-
 
 //Profile
 export const getMyProfile = (req, res) => {
@@ -295,18 +291,67 @@ export const getMyProfile = (req, res) => {
   });
 };
 
+// Admin Login
+export const adminLogin = async (req, res, next) => {
+  console.log("In Admin Login");
+  try {
+    const { email, password } = req.body;
+    const admin = await Admin.findOne({ email }).select("+password");
 
-//Logout
-export const logout = (req, res) => {
-  res
-    .status(200)
-    .cookie("token", "", {
-      expires: new Date(Date.now()),
-      sameSite: process.env.NODE_ENV === "Develpoment" ? "lax" : "none",
-      secure: process.env.NODE_ENV === "Develpoment" ? false : true,
-    })
-    .json({
-      success: true,
-      user: req.user,
-    });
+    if (!admin) return next(new ErrorHandler("Invalid Email or Password", 400));
+
+    const isMatch = await bcrypt.compare(password, admin.password);
+
+    if (!isMatch) return next(new ErrorHandler("Invalid Email or Password", 400));
+
+    // Assuming 'sendCookie' is a function to set cookies; modify as per your setup
+    sendCookie(admin, res, `Welcome back, ${admin.name}`, 200);
+  } catch (error) {
+    next(error);
+  }
 };
+
+// Admin Signup
+export const adminSignup = async (req, res, next) => {
+  console.log("In Admin Signup");
+  try {
+    const { name, email, password } = req.body;
+
+    console.log("In Admin Signup--")
+    console.log(name, email, password)
+    console.log("In Admin Signup--")
+
+    let admin = await Admin.findOne({ email });
+
+    if (admin) return next(new ErrorHandler("Admin Already Exist", 400));
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    console.log("here")
+    
+    admin = await Admin.create({ name, email, password: hashedPassword });
+    
+    console.log("here2")
+    // Handle response or send cookie if needed
+    sendCookie(admin, res, "Admin Registered Successfully", 201);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Logout
+export const logout = (req, res) => {
+  try {
+    const token = req.headers.token; // Extract token from headers
+    if (!token) {
+      return res.status(401).json({ success: false, message: 'Token not provided' });
+    }
+
+    // Clear the token from the client
+    res.status(200).json({ success: true, message: 'Logged Out' });
+  } catch (error) {
+    console.error('Error during logout:', error.message);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+};
+
