@@ -12,24 +12,62 @@ import DriverSignup from "./components/driversign";
 import DriverSignupSuccessful from "./components/driver_success";
 import RideSuccess from "./components/ride_success";
 import DriverDashboard from "./components/driver_dashborad";
+import Navbar from "./components/navbar";
+import { Outlet } from "react-router-dom";
 
-
+// CHANGE TOKEN NAMES
+function ProtectedRoutes1() {
+  
+  if (localStorage.getItem("driver_token")) {
+    console.log("client token found")
+    return <Outlet />;
+  } else {
+    console.log("client token not found")
+    return <Welcome />;
+  }
+}
+function ProtectedRoutes2() {
+  if (localStorage.getItem("client_token")) {
+    return <Outlet />;
+  } else {
+    return <Welcome />;
+  }
+}
+function ProtectedRoutes3() {
+  if (localStorage.getItem("admin_token")) {
+    return <Outlet />;
+  } else {
+    return <Welcome />;
+  }
+}
 
 function App() {
   return (
     <BrowserRouter>
+      <Navbar />
       <Routes>
         <Route path="/" element={<Welcome />} />
         <Route path="/client/login" element={<ClientLogin />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/driver/login" element={<DriverLogin />} />
         <Route path="/Signup" element={<Signup />} />
-        <Route path="/sign_success" element={<SignupSuccessful />} />
-        <Route path="/clientsuccess" element={<Client />} />
-        <Route path="/driversignup" element ={<DriverSignup />} />
-        <Route path="/driver_success" element ={<DriverSignupSuccessful />} />
-        <Route path="/ride_success" element ={<RideSuccess />} />
-        <Route path="/driver_dashboard" element ={<DriverDashboard />} />
+        <Route path="/driversignup" element={<DriverSignup />} />
+        {/* make a componet of route */}
+        <Route element={<ProtectedRoutes2 />}>
+          <Route path="/sign_success" element={<SignupSuccessful />} />
+        </Route>
+        <Route element={<ProtectedRoutes2 />}>
+          <Route path="/clientsuccess" element={<Client />} />
+        </Route>
+        <Route element={<ProtectedRoutes1 />}>
+          <Route path="/driver_success" element={<DriverSignupSuccessful />} />
+        </Route>
+        <Route element={<ProtectedRoutes2 />}>
+          <Route path="/ride_success" element={<RideSuccess />} />
+        </Route>
+        <Route element={<ProtectedRoutes1 />}>
+        <Route path="/driver_dashboard" element={<DriverDashboard />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
