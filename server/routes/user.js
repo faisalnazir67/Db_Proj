@@ -1,5 +1,5 @@
 import express from "express";
-import { getMyProfile, login, logout, register , driver_signup, getAvailableDrivers, setupRide, addRating, driverLogin } from "../controllers/user.js";
+import { getMyProfile, login, logout, register , driver_signup, getAvailableDrivers, setupRide, addRating, driverLogin, adminLogin, adminSignup } from "../controllers/user.js";
 import { isAuthenticated } from "../middlewares/auth.js";
 
 const router = express.Router();
@@ -12,7 +12,7 @@ router.post("/logout", logout);
 router.get("/me", isAuthenticated, getMyProfile);
 
 // Post Driver Signup Reqeust
-router.post("/driversignup",(driver_signup))
+router.post("/driversignup",driver_signup)
 
 //Get Driver Data on The Client Side
 router.get("/drivers",getAvailableDrivers)
@@ -23,7 +23,9 @@ router.post('/addrating',addRating)
 
 router.post('/driverlogin',driverLogin)
 
-router.post('adminlogin')
+router.post('/adminlogin', adminLogin)
+
+router.post('/adminsignup', adminSignup)
 
 // router.post("/new", register);
 // router.post("/login", login);

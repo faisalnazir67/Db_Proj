@@ -4,7 +4,7 @@ import { sendCookie } from "../utils/features.js";
 import ErrorHandler from "../middlewares/error.js";
 import { v4 as uuidv4 } from "uuid";
 
-import { Driver } from "../models/user.js";
+import { Driver, Admin } from "../models/user.js";
 import { Ride } from "../models/user.js";
 import { ObjectId } from "mongodb";
 
@@ -205,6 +205,54 @@ export const getMyProfile = (req, res) => {
     success: true,
     user: req.user,
   });
+};
+
+// Admin Login
+export const adminLogin = async (req, res, next) => {
+  console.log("In Admin Login");
+  try {
+    const { email, password } = req.body;
+    const admin = await Admin.findOne({ email }).select("+password");
+
+    if (!admin) return next(new ErrorHandler("Invalid Email or Password", 400));
+
+    const isMatch = await bcrypt.compare(password, admin.password);
+
+    if (!isMatch) return next(new ErrorHandler("Invalid Email or Password", 400));
+
+    // Assuming 'sendCookie' is a function to set cookies; modify as per your setup
+    sendCookie(admin, res, `Welcome back, ${admin.name}`, 200);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Admin Signup
+export const adminSignup = async (req, res, next) => {
+  console.log("In Admin Signup");
+  try {
+    const { name, email, password } = req.body;
+
+    console.log("In Admin Signup--")
+    console.log(name, email, password)
+    console.log("In Admin Signup--")
+
+    let admin = await Admin.findOne({ email });
+
+    if (admin) return next(new ErrorHandler("Admin Already Exist", 400));
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    console.log("here")
+    
+    admin = await Admin.create({ name, email, password: hashedPassword });
+    
+    console.log("here2")
+    // Handle response or send cookie if needed
+    sendCookie(admin, res, "Admin Registered Successfully", 201);
+  } catch (error) {
+    next(error);
+  }
 };
 
 // Logout

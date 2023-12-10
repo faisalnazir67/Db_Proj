@@ -10,6 +10,7 @@ const Welcome = () => {
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
     // Redirect based on the selected option
+    console.log(`/${option.toLowerCase()}/login`);
     navigate(`/${option.toLowerCase()}/login`);
   };
 

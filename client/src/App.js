@@ -14,6 +14,9 @@ import RideSuccess from "./components/ride_success";
 import DriverDashboard from "./components/driver_dashborad";
 import Navbar from "./components/navbar";
 import { Outlet } from "react-router-dom";
+import AdminSignup from "./components/admin_signup";
+import Admin from "./components/admin_success";
+
 
 // CHANGE TOKEN NAMES
 function ProtectedRoutes1() {
@@ -35,8 +38,10 @@ function ProtectedRoutes2() {
 }
 function ProtectedRoutes3() {
   if (localStorage.getItem("admin_token")) {
+    console.log("admin token found")
     return <Outlet />;
   } else {
+    console.log("admin token not found")
     return <Welcome />;
   }
 }
@@ -49,6 +54,7 @@ function App() {
         <Route path="/" element={<Welcome />} />
         <Route path="/client/login" element={<ClientLogin />} />
         <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/signup" element={<AdminSignup />} />
         <Route path="/driver/login" element={<DriverLogin />} />
         <Route path="/Signup" element={<Signup />} />
         <Route path="/driversignup" element={<DriverSignup />} />
@@ -67,6 +73,10 @@ function App() {
         </Route>
         <Route element={<ProtectedRoutes1 />}>
         <Route path="/driver_dashboard" element={<DriverDashboard />} />
+        </Route>
+
+        <Route element={<ProtectedRoutes3 />}>
+          <Route path="/admin_success" element={<Admin />} />
         </Route>
       </Routes>
     </BrowserRouter>
