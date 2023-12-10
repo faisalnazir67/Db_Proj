@@ -20,6 +20,7 @@ const Client = ()=>{
   
     const handleBookRideClick = async (req, res) => {
       
+      console.log("Here")
       try {
         const response = await fetch('http://localhost:5000/api/drivers'); // Assuming the API endpoint 
         const data =  await response.json();

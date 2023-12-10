@@ -111,7 +111,7 @@ export const getAvailableDrivers = async (req, res, next) => {
 
   try {
     // Find drivers where availability is 1 and project specific fields
-
+    console.log("Getting driver data")
     const drivers = await Driver.find({ available: 1 }, 'name phoneNumber carName licenseNumber');
 
     res.status(200).json({
@@ -123,6 +123,96 @@ export const getAvailableDrivers = async (req, res, next) => {
     next(error);
   }
 };
+
+//GEt Driver Wallet
+
+export const getDriverWallet = async (req, res, next) => {
+  try {
+    const { driverName } = req.body; // Retrieve driver's name from the request body
+
+    // Find the driver by name and select the wallet field
+    const driver = await Driver.findOne({ name: driverName }).select('wallet');
+
+    if (!driver) {
+      return res.status(404).json({ success: false, message: 'Driver not found' });
+    }
+
+    res.status(200).json({
+      success: true,
+      walletBalance: driver.wallet,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Set Driver Availability
+export const setDriverAvailability = async (req, res, next) => {
+  try {
+    const { driverName, availability } = req.body;
+
+    // Map the availability status to the corresponding database value (1 or 0)
+    const availabilityValue = availability === 'Available' ? 1 : 0;
+
+    // Find the driver by name and update the availability field
+    const updatedDriver = await Driver.findOneAndUpdate(
+      { name: driverName },
+      { available: availabilityValue },
+      { new: true } // To return the updated driver data
+    );
+
+    if (!updatedDriver) {
+      return res.status(404).json({ success: false, message: 'Driver not found' });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Driver availability updated to ${availability}`,
+      updatedDriver,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+//Ending Ride From Driver Side
+export const endRide = async (req, res, next) => {
+  try {
+    const { driverName } = req.body; // Retrieve driver's name from the request body
+
+    // Find the driver by name to get driver_id
+    const driver = await Driver.findOne({ name: driverName });
+
+    if (!driver) {
+      return res.status(404).json({ success: false, message: 'Driver not found' });
+    }
+
+    const driverId = driver._id; // Retrieve the driver's _id
+
+    console.log(driverId)
+
+    // Check if the driver_id exists in the rides database
+    const ride = await Ride.findOne({ driver_id: driverId });
+    
+    console.log(ride)
+    if (!ride) {
+      return res.status(404).json({ success: false, message: 'Ride not found for this driver' });
+    }
+
+    // Delete the ride document from the rides database
+    await Ride.findOneAndDelete({ driver_id: driverId });
+    console.log("deleted Ride")
+    // Update driver's availability to 1 (Available)
+    await Driver.findOneAndUpdate({ _id: driverId }, { available: 1 });
+    console.log("Updated Driver")
+    res.status(200).json({ success: true, message: 'Ride ended successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
 
 // Set up a ride
 export const setupRide = async (req, res, next) => {
@@ -155,7 +245,6 @@ export const setupRide = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: 'Ride setup successful.',
-      ride_id: ride_id,
       driver_id: driver_id,
       ride: newRide,
     })
@@ -167,7 +256,6 @@ export const setupRide = async (req, res, next) => {
 };
 
 // AddRating
-
 export const addRating = async (req, res, next) => {
   try {
     const { rating, rideData } = req.body;
@@ -178,21 +266,16 @@ export const addRating = async (req, res, next) => {
     // console.log('Received rideData:', rideData);
     const { ride_id, driver_id } = rideData; // Extract ride_id and driver_id from rideData
     
-    const driverObjectId =new ObjectId(driver_id);
+    // const driverObjectId =new ObjectId(driver_id);
     console.log(ride_id)
-    console.log( driverObjectId )
-    // Delete the ride with the specified ride_id from the rides collection
+    console.log( driver_id )
+    
     await Ride.findOneAndDelete({ ride_id });
 
-    // Update the driver document to set 'available' to 1
-    await Driver.findOneAndUpdate({  driverObjectId  }, { available: 1 });
+    await Driver.findOneAndUpdate({  driver_id }, { available: 1 });
 
-    // Create a new 'rating' field in the Driver document with the received rating
-    await Driver.findOneAndUpdate({  driverObjectId  }, { $set: { rating } });
+    await Driver.findOneAndUpdate({  driver_id  }, { $set: { rating } });
 
-    // Perform other operations with the rating data, like saving it to a database
-
-    // Send a response indicating successful rating addition
     res.status(200).json({ success: true, message: 'Rating added successfully.' });
   } catch (error) {
     // Handle errors

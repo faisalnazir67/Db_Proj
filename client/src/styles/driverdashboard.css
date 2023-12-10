@@ -1,0 +1,191 @@
+/* Unchanged styles */
+.client {
+    display: flex;
+    align-items: stretch;
+    height: 100vh;
+  }
+  
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    width: 200px; /* Adjust sidebar width as needed */
+    height: 100vh;
+  }
+  
+  .sidebar h2 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  
+  .sidebar-button {
+    color: white;
+    margin-bottom: 15px;
+    padding: 12px 24px;
+    width: 150px; /* Adjust width as needed */
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    align-self: center; /* Align buttons in the middle */
+  }
+  
+  .sidebar-button:hover {
+    background-color: #0056b3;
+  }
+  
+  main {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap; /* Allow flex items to wrap */
+    padding: 20px;
+  }
+  
+  .driver-details {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .driver-block {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px;
+    width: 250px; /* Adjust width as needed */
+    /* Add the following styles to arrange the blocks in a row */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  /* Additional styling for driver-block contents */
+  .driver-block h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  .driver-block p {
+    margin-bottom: 5px;
+  }
+  
+  /* Styling for Select Driver button in driver-block */
+  .driver-block .select-driver-button {
+    margin-top: 10px;
+    padding: 12px 24px;
+    width: 180px; /* Adjust width as needed */
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    align-self: center;
+    text-align: center;
+  }
+  
+  .driver-block .select-driver-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .location-details {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .location-block {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px;
+    width: 250px; /* Adjust width as needed */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  /* Additional styling for location-block contents */
+  .location-block h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  .location-block p {
+    margin-bottom: 5px;
+  }
+  
+  /* Styling for Select Location button in location-block */
+  .location-block button {
+    margin-top: 10px;
+    padding: 12px 24px;
+    width: 180px; /* Adjust width as needed */
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: center;
+  }
+  
+  .location-block button:hover {
+    background-color: #0056b3;
+  }
+
+  .confirmation-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #333; /* Change background color to dark */
+    color: white; /* Change text color to white */
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    text-align: center;
+  }
+  
+  .confirmation-message p {
+    margin-bottom: 15px;
+    color: white; /* Change text color to white */
+  }
+  
+  .confirmation-message button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .confirmation-message button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Media query for responsiveness */
+  @media (max-width: 768px) {
+    .sidebar {
+      width: 100%; /* Make sidebar take full width on smaller screens */
+    }
+    
+    main {
+      padding: 10px;
+    }
+    
+    .driver-block {
+      width: 100%; /* Make driver blocks take full width on smaller screens */
+    }
+  }
+  
