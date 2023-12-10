@@ -34,4 +34,59 @@
   .signup-successful-page button:hover {
     background-color: #0056b3;
   }
-  
+  /* New styles for the modal */
+/* New styles for the modal */
+.custom-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  /* Your styles for the modal */
+}
+
+.custom-modal h2 {
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  color: #333;
+  /* Additional styles for the modal title */
+}
+
+.custom-modal p {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  color: #666;
+  /* Additional styles for the modal content */
+}
+
+.custom-modal .stars {
+  font-size: 2rem;
+  cursor: pointer;
+  /* Additional styles for the stars */
+}
+.custom-modal .stars span {
+  color: yellow; /* Set stars color to yellow */
+}
+
+.custom-modal .stars span:hover {
+  color: darkgoldenrod; /* Change star color to dark yellow on hover */
+}
+
+.custom-modal button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.custom-modal button:hover {
+  background-color: #0056b3;
+  /* Additional styles for the close button on hover */
+}

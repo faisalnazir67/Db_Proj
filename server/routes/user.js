@@ -1,5 +1,5 @@
 import express from "express";
-import { getMyProfile, login, logout, register , driver_signup, getAvailableDrivers, setupRide } from "../controllers/user.js";
+import { getMyProfile, login, logout, register , driver_signup, getAvailableDrivers, setupRide, addRating, driverLogin } from "../controllers/user.js";
 import { isAuthenticated } from "../middlewares/auth.js";
 
 const router = express.Router();
@@ -19,6 +19,11 @@ router.get("/drivers",getAvailableDrivers)
 
 router.post('/set_ride',setupRide)
 
+router.post('/addrating',addRating)
+
+router.post('/driverlogin',driverLogin)
+
+router.post('adminlogin')
 
 // router.post("/new", register);
 // router.post("/login", login);

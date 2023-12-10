@@ -76,13 +76,13 @@ const Client = ()=>{
          
           console.log('Ride successfully created!');
           // Reset state or perform other operations as needed
+          const data = await response.json();
           setSelectedDriver(null);
           setShowLocations(false);
 
           navigation('/ride_success', {
             state: {
-              ride_id: ride_id,
-              driver_id: driver_id,
+              rideData: data,
             },
           });
         } else {

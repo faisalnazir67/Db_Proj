@@ -10,6 +10,8 @@ import SignupSuccessful from "./components/sign_success";
 import Client from "./components/client";
 import DriverSignup from "./components/driversign";
 import DriverSignupSuccessful from "./components/driver_success";
+import RideSuccess from "./components/ride_success";
+import DriverDashboard from "./components/driver_dashborad";
 
 
 
@@ -26,6 +28,8 @@ function App() {
         <Route path="/clientsuccess" element={<Client />} />
         <Route path="/driversignup" element ={<DriverSignup />} />
         <Route path="/driver_success" element ={<DriverSignupSuccessful />} />
+        <Route path="/ride_success" element ={<RideSuccess />} />
+        <Route path="/driver_dashboard" element ={<DriverDashboard />} />
       </Routes>
     </BrowserRouter>
   );

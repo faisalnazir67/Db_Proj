@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { Driver } from "../models/user.js";
 import { Ride } from "../models/user.js";
+import { ObjectId } from 'mongodb';
 
 // CLient login
 export const login = async (req, res, next) => {
@@ -23,6 +24,27 @@ export const login = async (req, res, next) => {
     sendCookie(user, res, `Welcome back, ${user.name}`, 200);
   } catch (error) {
    
+    next(error);
+  }
+};
+
+//Driver Login
+
+export const driverLogin = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    const driver = await Driver.findOne({ email }).select("+password");
+
+    if (!driver) return next(new ErrorHandler("Invalid Email or Password", 400));
+
+    const isMatch = await bcrypt.compare(password, driver.password);
+   
+    if (!isMatch)
+      return next(new ErrorHandler("Invalid Email or Password", 400));
+
+    // Assuming 'sendCookie' is a function to set cookies; modify as per your setup
+    sendCookie(driver, res, `Welcome back, ${driver.name}`, 200);
+  } catch (error) {
     next(error);
   }
 };
@@ -144,6 +166,40 @@ export const setupRide = async (req, res, next) => {
   }
 };
 
+// AddRating
+
+export const addRating = async (req, res, next) => {
+  try {
+    const { rating, rideData } = req.body;
+
+    // const { ObjectId } = require('mongodb');
+    // Log the received rating and rideData
+    console.log('Received rating:', rating);
+    // console.log('Received rideData:', rideData);
+    const { ride_id, driver_id } = rideData; // Extract ride_id and driver_id from rideData
+    
+    const driverObjectId =new ObjectId(driver_id);
+    console.log(ride_id)
+    console.log( driverObjectId )
+    // Delete the ride with the specified ride_id from the rides collection
+    await Ride.findOneAndDelete({ ride_id });
+
+    // Update the driver document to set 'available' to 1
+    await Driver.findOneAndUpdate({  driverObjectId  }, { available: 1 });
+
+    // Create a new 'rating' field in the Driver document with the received rating
+    await Driver.findOneAndUpdate({  driverObjectId  }, { $set: { rating } });
+
+    // Perform other operations with the rating data, like saving it to a database
+
+    // Send a response indicating successful rating addition
+    res.status(200).json({ success: true, message: 'Rating added successfully.' });
+  } catch (error) {
+    // Handle errors
+    console.error('Error adding rating:', error);
+    next(error);
+  }
+};
 
 
 
