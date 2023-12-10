@@ -26,7 +26,7 @@ const Login = () => {
         // Redirect or perform any necessary actions upon successful login
         const userData = await response.json(); // Assuming the response contains user data
         const { name } = userData; // Extracting the name from user data
-      
+        localStorage.setItem("driver_token", userData.token);
         navigate('/driver_dashboard', { state: { name } });
 
       } else {
